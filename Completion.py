@@ -222,6 +222,9 @@ class YcmdCompletionEventListener(sublime_plugin.EventListener):
         '''Called when the file is finished loading'''
         if not is_cpp(view) or view.is_scratch():
             return
+        view_id = view.id()
+        if self.view_cache.get(view_id) == None:
+            self.view_cache[view_id] = {}
         filepath = get_file_path()
         content = view.substr(sublime.Region(0, view.size()))
         t = Thread(None, notify_func, 'NotifyAsync', [filepath, content, self._on_errors])
@@ -243,7 +246,10 @@ class YcmdCompletionEventListener(sublime_plugin.EventListener):
     def on_activated_async(self, view):
         if not is_cpp(view) or view.is_scratch():
             return
-        ERROR_PANEL.update(self.view_cache)
+        view_id = view.id()
+        if self.view_cache.get(view_id) == None:
+            self.on_load_async(view)
+        ERROR_PANEL.update(self.view_cache, view)
 
     def on_query_completions(self, view, prefix, locations):
         '''Sublime Text autocompletion event handler'''
