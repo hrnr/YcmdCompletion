@@ -76,8 +76,9 @@ def plugin_loaded():
 
 
 def plugin_unloaded():
-    print('[Ycmd] Plugin unloaded, so killing server.')
-    LOCAL_SERVER.Shutdown()
+    if LOCAL_SERVER != None:
+        print('[Ycmd] Plugin unloaded, so killing server.')
+        LOCAL_SERVER.Shutdown()
 
 
 def open_user_settings():
